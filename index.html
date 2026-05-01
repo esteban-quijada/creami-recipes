@@ -200,6 +200,38 @@
             margin-bottom: 24px;
         }
 
+        /* Size toggle */
+        .size-toggle {
+            display: inline-flex;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-left: 12px;
+            vertical-align: middle;
+        }
+
+        .size-toggle button {
+            padding: 4px 14px;
+            background: none;
+            border: none;
+            color: var(--text-tertiary);
+            font-size: 0.75rem;
+            font-family: inherit;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .size-toggle button.active {
+            background: var(--accent);
+            color: white;
+        }
+
+        .size-toggle button:hover:not(.active) {
+            color: var(--text);
+        }
+
         /* Video */
         .video-wrapper {
             position: relative;
@@ -538,6 +570,58 @@ const db = [
                 notes: [
                     "Swap sprinkles for crushed cookies or chocolate chips for different variations."
                 ]
+            },
+            {
+                title: "PB Salted Caramel Protein Ice Cream",
+                videoId: "",
+                tiktok: "https://www.tiktok.com/@fitnessproductfinder/video/7281387573447019807",
+                thumbnail: "thumbnails/pb-caramel-protein-ice-cream.jpg",
+                desc: "A high-protein peanut butter salted caramel ice cream with a Barebells protein bar mix-in, yielding 465 calories and 45g protein.",
+                baseType: "Lite Ice Cream",
+                ingredients: [
+                    "400g (about 1\u2154 cups) Fat Free Fairlife Milk",
+                    "40\u201345g (about 3\u2153 to 3\u00be tbsp) 1:1 sugar substitute",
+                    "8g (1 tbsp) PB powder (like PB Fit or PB2)",
+                    "2g (\u00bd tsp) salt",
+                    "1g (\u00bc tsp) xanthan gum",
+                    "1 Soft Barebells Peanut Caramel Protein Bar (mix-in)"
+                ],
+                steps: [
+                    "Add 400g (about 1\u2154 cups) Fat Free Fairlife Milk, 40\u201345g (about 3\u2153 to 3\u00be tbsp) 1:1 sugar substitute, 8g (1 tbsp) PB powder, 2g (\u00bd tsp) salt, and 1g (\u00bc tsp) xanthan gum to a blender. Blend all ingredients for the base.",
+                    "Pour the mixture into a Ninja Creami pint container and freeze for at least 16 hours.",
+                    "Before processing, run the frozen pint under hot water for at least 60 seconds.",
+                    "Process on the Lite Ice Cream setting.",
+                    "Process again on the Respin setting.",
+                    "If the texture is still powdery after the respin, re-spin again.",
+                    "Make a hole down to the bottom of the pint with a butter knife and fill with 1 Soft Barebells Peanut Caramel Protein Bar.",
+                    "Process on the Mix-in cycle."
+                ],
+                notes: []
+            },
+            {
+                title: "Strawberry Protein Ice Cream",
+                videoId: "",
+                tiktok: "https://www.tiktok.com/@fitnessproductfinder/video/7271388380817116462",
+                thumbnail: "thumbnails/strawberry-protein-ice-cream.jpg",
+                desc: "A simple strawberry protein ice cream with just 250 calories and 23g of protein.",
+                baseType: "Lite Ice Cream",
+                ingredients: [
+                    "340g (11.5 fl oz / 1 bottle) Fairlife Strawberry Milk or Strawberry Protein Shake",
+                    "10\u201315g sweetener",
+                    "1g (\u00bc tsp) salt",
+                    "1g (\u00bc tsp) xanthan gum"
+                ],
+                steps: [
+                    "Blend 340g (11.5 fl oz / 1 bottle) Fairlife Strawberry Milk, 10\u201315g sweetener, 1g (\u00bc tsp) salt, and 1g (\u00bc tsp) xanthan gum for the base.",
+                    "Freeze the blended mixture for at least 16 hours in a Ninja Creami pint container.",
+                    "Before processing, run the frozen pint under hot water for at least 60 seconds.",
+                    "Spin the pint on the Lite Ice Cream setting.",
+                    "Spin the pint again on the Respin setting.",
+                    "Respin again if the texture is powdery after the second spin."
+                ],
+                notes: [
+                    "Approximately 250 calories, 21g carbs, 8g fat, and 23g protein."
+                ]
             }
         ]
     }
@@ -552,6 +636,71 @@ const tips = [
     { title: "Freeze Time", body: "24 hours is the standard. If you heated the base (e.g. melting chocolate or tempering eggs), freeze for 36 hours instead." },
     { title: "Re-spinning", body: "If the result is crumbly or icy after the first spin, re-process on the same setting. Scrape down the sides before the second run." }
 ];
+
+// --- SCALING ---
+// Standard pint = 16 oz, Deluxe pint = 24 oz → 1.5x
+const SCALE_FACTOR = 1.5;
+let currentSize = 'standard';
+let currentRecipe = null;
+
+const FRACTION_MAP = {
+    '\u00bc': 0.25, '\u00bd': 0.5, '\u00be': 0.75,
+    '\u2153': 1/3, '\u2154': 2/3, '\u2155': 0.2, '\u2156': 0.4,
+    '\u2157': 0.6, '\u2158': 0.8, '\u2159': 1/6, '\u215a': 5/6,
+    '\u215b': 0.125, '\u215c': 0.375, '\u215d': 0.625, '\u215e': 0.875
+};
+
+function toFraction(val) {
+    const fracs = [
+        [0.125, '\u215b'], [0.2, '\u2155'], [0.25, '\u00bc'],
+        [1/3, '\u2153'], [0.375, '\u215c'], [0.4, '\u2156'],
+        [0.5, '\u00bd'], [0.6, '\u2157'], [0.625, '\u215d'],
+        [2/3, '\u2154'], [0.75, '\u00be'], [0.8, '\u2158'],
+        [0.875, '\u215e'], [5/6, '\u215a']
+    ];
+    const whole = Math.floor(val);
+    const remainder = val - whole;
+    if (remainder < 0.05) return whole === 0 ? '0' : String(whole);
+    const closest = fracs.reduce((best, [f, ch]) =>
+        Math.abs(f - remainder) < Math.abs(best[0] - remainder) ? [f, ch] : best
+    );
+    if (Math.abs(closest[0] - remainder) < 0.05) {
+        return whole > 0 ? `${whole}${closest[1]}` : closest[1];
+    }
+    return val % 1 === 0 ? String(val) : val.toFixed(1).replace(/\.0$/, '');
+}
+
+function scaleText(text, factor) {
+    if (factor === 1) return text;
+    // Match patterns like: 400g, 10-15g, 1½, 40–45g, 11.5 fl oz
+    return text.replace(/(\d+\.?\d*)\s*[\u2013-]\s*(\d+\.?\d*)(g|ml|oz)\b/g, (m, lo, hi, unit) => {
+        const sLo = parseFloat(lo) * factor;
+        const sHi = parseFloat(hi) * factor;
+        const fLo = sLo % 1 === 0 ? String(sLo) : sLo.toFixed(1).replace(/\.0$/, '');
+        const fHi = sHi % 1 === 0 ? String(sHi) : sHi.toFixed(1).replace(/\.0$/, '');
+        return `${fLo}\u2013${fHi}${unit}`;
+    }).replace(/(\d+\.?\d*)(g|ml|oz)\b/g, (m, num, unit) => {
+        const scaled = parseFloat(num) * factor;
+        const fmt = scaled % 1 === 0 ? String(scaled) : scaled.toFixed(1).replace(/\.0$/, '');
+        return `${fmt}${unit}`;
+    }).replace(/(\d*)([\u00bc\u00bd\u00be\u2153\u2154\u2155\u2156\u2157\u2158\u2159\u215a\u215b\u215c\u215d\u215e])/g, (m, whole, frac) => {
+        const val = (whole ? parseInt(whole) : 0) + FRACTION_MAP[frac];
+        return toFraction(val * factor);
+    }).replace(/\((\d+\.?\d*)\s+(cups?|tbsp|tsp|fl oz|scoops?|bottles?)\)/g, (m, num, unit) => {
+        const scaled = parseFloat(num) * factor;
+        const fmt = scaled % 1 === 0 ? String(scaled) : scaled.toFixed(1).replace(/\.0$/, '');
+        return `(${fmt} ${unit})`;
+    }).replace(/\(about\s+(\d+\.?\d*)\s+(cups?|tbsp|tsp|fl oz|scoops?)\)/g, (m, num, unit) => {
+        const scaled = parseFloat(num) * factor;
+        const fmt = scaled % 1 === 0 ? String(scaled) : scaled.toFixed(1).replace(/\.0$/, '');
+        return `(about ${fmt} ${unit})`;
+    });
+}
+
+function setSize(size) {
+    currentSize = size;
+    if (currentRecipe) loadRecipe(currentRecipe[0], currentRecipe[1]);
+}
 
 // --- APP LOGIC ---
 const recipeListEl = document.getElementById('recipeList');
@@ -595,7 +744,9 @@ function filterRecipes() {
 }
 
 function loadRecipe(gi, ri) {
+    currentRecipe = [gi, ri];
     const r = db[gi].recipes[ri];
+    const factor = currentSize === 'deluxe' ? SCALE_FACTOR : 1;
 
     document.querySelectorAll('.recipe-item').forEach(el => el.classList.remove('active'));
     const active = document.querySelector(`.recipe-item[data-g="${gi}"][data-r="${ri}"]`);
@@ -635,8 +786,15 @@ function loadRecipe(gi, ri) {
         `;
     }
 
+    const stdClass = currentSize === 'standard' ? 'active' : '';
+    const dlxClass = currentSize === 'deluxe' ? 'active' : '';
+
     contentAreaEl.innerHTML = `
         <span class="recipe-meta">${r.baseType}</span>
+        <div class="size-toggle">
+            <button class="${stdClass}" onclick="setSize('standard')">Standard (16 oz)</button>
+            <button class="${dlxClass}" onclick="setSize('deluxe')">Deluxe (24 oz)</button>
+        </div>
         <h1 class="recipe-title">${r.title}</h1>
         <p class="recipe-desc">${r.desc}</p>
         ${videoHTML}
@@ -644,14 +802,14 @@ function loadRecipe(gi, ri) {
         <div class="section">
             <div class="section-title">Ingredients</div>
             <ul class="ingredient-list">
-                ${r.ingredients.map(i => `<li><input type="checkbox"><span>${i}</span></li>`).join('')}
+                ${r.ingredients.map(i => `<li><input type="checkbox"><span>${scaleText(i, factor)}</span></li>`).join('')}
             </ul>
         </div>
 
         <div class="section">
             <div class="section-title">Steps</div>
             <ol class="steps-list">
-                ${r.steps.map(s => `<li><span>${s}</span></li>`).join('')}
+                ${r.steps.map(s => `<li><span>${scaleText(s, factor)}</span></li>`).join('')}
             </ol>
         </div>
 
