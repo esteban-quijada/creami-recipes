@@ -2,62 +2,58 @@
 
 Browse the recipes: **https://esteban-quijada.github.io/creami-recipes**
 
-Extract Ninja Creami recipes from YouTube and TikTok videos using `yt-dlp` and `fabric-ai`.
+A collection of Ninja Creami recipes extracted from YouTube and TikTok videos using [yt-dlp](https://github.com/yt-dlp/yt-dlp) and [fabric-ai](https://github.com/danielmiessler/fabric), served as a static site on GitHub Pages.
 
-## Prerequisites
-
-- [yt-dlp](https://github.com/yt-dlp/yt-dlp) -- download subtitles/transcripts from YouTube
-- [fabric-ai](https://github.com/danielmiessler/fabric) -- AI-powered text processing with patterns
-
-Install both via Homebrew:
+## Quick Start
 
 ```bash
+# Install dependencies
 brew install yt-dlp fabric-ai
-```
 
-## Setup
-
-Copy the custom Fabric pattern into your local patterns directory:
-
-```bash
+# Install the custom fabric pattern (one-time setup)
 mkdir -p ~/.config/fabric/patterns/extract_creami_recipe
 cp custom-fabric-pattern-extract-creami-recipe.md ~/.config/fabric/patterns/extract_creami_recipe/system.md
+
+# Extract a recipe
+./extract-recipe.sh "https://www.youtube.com/watch?v=VIDEO_ID" transcript
+# or
+./extract-recipe.sh "https://www.tiktok.com/@user/video/ID" description
+
+# Commit and deploy
+git add recipes.json recipes/ thumbnails/
+git commit -m "Add recipe-name"
+git push
 ```
 
-## Workflow
+The website updates automatically on GitHub Pages after push.
 
-### 1. Download the transcript
+## How It Works
 
-Use `yt-dlp` to grab auto-generated subtitles from a YouTube video. The `--replace-in-metadata` flag swaps spaces for dashes in the filename:
-
-```bash
-yt-dlp --write-auto-sub --skip-download --replace-in-metadata "title" " " "-" <VIDEO_URL>
+```
+YouTube / TikTok video
+        |
+    yt-dlp (transcript or description + thumbnail)
+        |
+    fabric-ai (custom extract_creami_recipe pattern)
+        |
+    recipes/<name>.md + recipes.json
+        |
+    git push -> GitHub Pages
 ```
 
-This produces a `.vtt` subtitle file in the current directory.
+The extraction script (`extract-recipe.sh`) handles the full pipeline: downloads content and thumbnail, extracts a structured recipe via fabric-ai, saves the `.md` file, and appends to `recipes.json` which the website fetches at load time.
 
-### 2. Extract recipes
+## Website Features
 
-Pipe the transcript into `fabric` with the custom pattern:
+- Dark theme with recipe sidebar, search, and category grouping
+- Ingredients with checkboxes and dual-unit format (grams + volume)
+- Numbered steps with inline measurements
+- Standard (16 oz) / Deluxe (24 oz) size toggle that scales all quantities
+- Clickable video thumbnail previews (YouTube and TikTok)
+- Mobile responsive
 
-```bash
-cat <transcript>.vtt | fabric --pattern extract_creami_recipe
-```
+## Docs
 
-This outputs structured Markdown for each recipe found in the video, including ingredients, preparation steps, freezing instructions, Creami program/spin settings, and mix-ins.
-
-### 3. Save the output
-
-To save the extracted recipes to a file:
-
-```bash
-cat <transcript>.vtt | fabric --pattern extract_creami_recipe > <recipe-name>.md
-```
-
-## One-liner
-
-Download transcript and extract recipes in a single pipeline:
-
-```bash
-yt-dlp --write-auto-sub --skip-download -o - <VIDEO_URL> | fabric --pattern extract_creami_recipe
-```
+- [System Design](docs/system-design.md) -- architecture, components, directory structure
+- [Architecture Decisions](docs/architecture-decisions.md) -- ADRs for key technical choices
+- [Tooling & Dependencies](docs/tooling-dependencies.md) -- tools, services, setup requirements
