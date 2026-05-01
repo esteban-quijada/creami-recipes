@@ -9,6 +9,7 @@
         "thumbnail": "thumbnails/cake-batter-protein-ice-cream.jpg",
         "desc": "A high-protein cake batter flavored ice cream at only 135 calories with 22g protein.",
         "baseType": "Lite Ice Cream",
+        "macros": { "calories": 135, "protein": 22, "fat": 2, "carbs": 8, "sugar": 3 },
         "ingredients": [
           "240g (1 cup) unsweetened vanilla almond milk",
           "170g (1 scoop) vanilla protein powder",
@@ -36,6 +37,7 @@
         "thumbnail": "thumbnails/pb-caramel-protein-ice-cream.jpg",
         "desc": "A high-protein peanut butter salted caramel ice cream with a Barebells protein bar mix-in, yielding 465 calories and 45g protein.",
         "baseType": "Lite Ice Cream",
+        "macros": { "calories": 465, "protein": 45, "fat": 12, "carbs": 40, "sugar": 15 },
         "ingredients": [
           "400g (about 1⅔ cups) Fat Free Fairlife Milk",
           "40–45g (about 3⅓ to 3¾ tbsp) 1:1 sugar substitute",
@@ -63,6 +65,7 @@
         "thumbnail": "thumbnails/strawberry-protein-ice-cream.jpg",
         "desc": "A simple strawberry protein ice cream with just 250 calories and 23g of protein.",
         "baseType": "Lite Ice Cream",
+        "macros": { "calories": 250, "protein": 23, "fat": 8, "carbs": 21, "sugar": 16 },
         "ingredients": [
           "340g (11.5 fl oz / 1 bottle) Fairlife Strawberry Milk or Strawberry Protein Shake",
           "10–15g sweetener",
@@ -93,6 +96,7 @@
         "thumbnail": "thumbnails/perfect-oreo-ice-cream.jpg",
         "desc": "This recipe aims to create an ice cream that tastes like real cookies and cream while having the macros to eat it every day, featuring a unique technique for soft Oreo chunks.",
         "baseType": "Lite Ice Cream",
+        "macros": { "calories": 350, "protein": 40, "fat": 6, "carbs": 35, "sugar": 18 },
         "ingredients": [
           "1 whole Oreo",
           "410g (about 1⅔ cups) fat-free high protein milk",

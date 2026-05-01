@@ -14,6 +14,7 @@ Take a step back and think step-by-step about how to extract the most accurate a
   - The base type (ice cream, gelato, sorbet, frozen yogurt, lite ice cream, milkshake, smoothie bowl, mix-in, etc.)
   - All ingredients with exact measurements in both grams and volume/count format: "Xg (Y cups/tbsp/tsp) ingredient" (e.g., "615g (about 2½ cups) 2% milk"). If only one unit is provided in the source, include that unit and convert to the other. Grams always come first.
   - All steps as a single sequential list combining preparation, freezing, Creami processing, and mix-ins in the order they are performed. Each step should be a full sentence describing the action, including relevant details like program settings, spin counts, and timing. When an ingredient is referenced in a step, include its measurement inline (e.g., "Add 615g (about 2½ cups) 2% milk" not just "Add the milk").
+  - Estimated macros for the entire pint if mentioned or calculable: calories, protein (g), fat (g), carbs (g), sugar (g)
   - Any tips or notes the creator mentions
 
 # OUTPUT INSTRUCTIONS
@@ -61,6 +62,14 @@ Example:
 6. Snap on the lid, place it level in the freezer, and freeze for a full 24 hours.
 7. Remove from the freezer and run on the "Lite Ice Cream" setting.
 8. If it's not fully creamy after the first spin, re-process once more on the same setting. Scrape down the sides if needed before the second run.
+
+### Macros
+
+- **Calories:** [number]
+- **Protein:** [number]g
+- **Fat:** [number]g
+- **Carbs:** [number]g
+- **Sugar:** [number]g
 
 ### Notes
 

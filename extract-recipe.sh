@@ -175,6 +175,16 @@ if steps_match:
         if step:
             steps.append(step)
 
+# Parse macros
+macros = {}
+macros_match = re.search(r"### Macros\s*\n(.*?)(?=\n###|\n---|\Z)", md, re.DOTALL)
+if macros_match:
+    macros_text = macros_match.group(1)
+    for key in ["Calories", "Protein", "Fat", "Carbs", "Sugar"]:
+        m = re.search(rf"\*\*{key}:\*\*\s*(\d+)", macros_text)
+        if m:
+            macros[key.lower()] = int(m.group(1))
+
 # Parse notes
 notes = []
 notes_match = re.search(r"### Notes\s*\n(.*?)(?=\n###|\n---|\Z)", md, re.DOTALL)
@@ -191,6 +201,7 @@ recipe = {
     "thumbnail": thumbnail,
     "desc": desc,
     "baseType": base_type,
+    "macros": macros if macros else {},
     "ingredients": ingredients,
     "steps": steps,
     "notes": notes

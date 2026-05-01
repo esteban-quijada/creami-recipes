@@ -461,27 +461,95 @@
         /* Hero / Welcome */
         .hero {
             text-align: center;
-            padding: 80px 20px;
+            padding: 48px 0 24px;
         }
 
         .hero h1 {
-            font-size: 3rem;
+            font-size: 2.4rem;
             font-weight: 800;
             letter-spacing: -0.04em;
             background: var(--gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 16px;
+            margin-bottom: 8px;
         }
 
         .hero p {
-            font-size: 1.1rem;
+            font-size: 0.95rem;
             color: var(--text-secondary);
-            max-width: 480px;
-            margin: 0 auto;
-            line-height: 1.7;
+            line-height: 1.6;
             font-weight: 300;
+            margin-bottom: 32px;
+        }
+
+        /* Recipe Cards */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .recipe-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+
+        .recipe-card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+        }
+
+        .recipe-card img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+        }
+
+        .recipe-card-body {
+            padding: 14px 16px;
+        }
+
+        .recipe-card-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+            line-height: 1.3;
+        }
+
+        .recipe-card-type {
+            font-size: 0.7rem;
+            color: var(--accent-2);
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .recipe-card-macros {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .macro-pill {
+            font-size: 0.68rem;
+            padding: 3px 8px;
+            border-radius: 4px;
+            background: var(--surface-2);
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .macro-pill.cal {
+            background: var(--accent-glow);
+            color: var(--accent-2);
+        }
+
+        @media (max-width: 768px) {
+            .card-grid { grid-template-columns: 1fr; }
         }
 
         /* Shopping list */
@@ -517,7 +585,7 @@
 <body>
 
 <div class="sidebar">
-    <div class="sidebar-header">
+    <div class="sidebar-header" style="cursor:pointer;" onclick="showHome()">
         <h2>Creami Recipes</h2>
         <p>Ninja Creami cookbook</p>
     </div>
@@ -732,6 +800,49 @@ function loadRecipe(gi, ri) {
     `;
 }
 
+function showHome() {
+    currentRecipe = null;
+    document.querySelectorAll('.recipe-item').forEach(el => el.classList.remove('active'));
+    document.querySelector('.main').scrollTop = 0;
+
+    let cardsHTML = '';
+    db.forEach((group, gi) => {
+        group.recipes.forEach((r, ri) => {
+            const thumbSrc = r.thumbnail || (r.videoId ? `https://img.youtube.com/vi/${r.videoId}/mqdefault.jpg` : '');
+            const imgHTML = thumbSrc ? `<img src="${thumbSrc}" alt="${r.title}">` : '';
+            const m = r.macros || {};
+            const macrosHTML = m.calories != null ? `
+                <div class="recipe-card-macros">
+                    <span class="macro-pill cal">${m.calories} cal</span>
+                    <span class="macro-pill">${m.protein}g protein</span>
+                    <span class="macro-pill">${m.fat}g fat</span>
+                    <span class="macro-pill">${m.carbs}g carbs</span>
+                    <span class="macro-pill">${m.sugar}g sugar</span>
+                </div>
+            ` : '';
+
+            cardsHTML += `
+                <div class="recipe-card" onclick="loadRecipe(${gi}, ${ri})">
+                    ${imgHTML}
+                    <div class="recipe-card-body">
+                        <div class="recipe-card-title">${r.title}</div>
+                        <div class="recipe-card-type">${r.baseType}</div>
+                        ${macrosHTML}
+                    </div>
+                </div>
+            `;
+        });
+    });
+
+    contentAreaEl.innerHTML = `
+        <div class="hero">
+            <h1>Creami Recipes</h1>
+            <p>A collection of Ninja Creami recipes extracted from YouTube and TikTok videos.</p>
+        </div>
+        <div class="card-grid">${cardsHTML}</div>
+    `;
+}
+
 function showTips() {
     document.querySelectorAll('.recipe-item').forEach(el => el.classList.remove('active'));
     document.querySelector('.main').scrollTop = 0;
@@ -747,7 +858,7 @@ function showTips() {
 
 fetch('recipes.json')
     .then(res => res.json())
-    .then(data => { db = data; renderSidebar(); })
+    .then(data => { db = data; renderSidebar(); showHome(); })
     .catch(err => {
         contentAreaEl.innerHTML = `<div class="hero"><h1 class="recipe-title">Failed to load recipes</h1><p class="recipe-desc">${err.message}</p></div>`;
     });
