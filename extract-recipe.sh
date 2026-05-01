@@ -12,7 +12,8 @@ usage() {
 
 [ $# -lt 2 ] && usage
 
-URL="$1"
+# Strip backslashes from URL (e.g. \? \= from copy-pasted URLs)
+URL=$(echo "$1" | tr -d '\\')
 SOURCE="$2"
 
 if [[ "$SOURCE" != "description" && "$SOURCE" != "transcript" ]]; then
@@ -36,6 +37,8 @@ if [ -z "$RECIPE_NAME" ]; then
     echo "Error: recipe name cannot be empty"
     exit 1
 fi
+# Convert spaces to dashes and lowercase
+RECIPE_NAME=$(echo "$RECIPE_NAME" | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
 
 # Prompt for category
 read -rp "Category (e.g. Protein Ice Cream): " CATEGORY
@@ -54,13 +57,16 @@ echo "Downloading thumbnail..."
 yt-dlp --write-thumbnail --skip-download \
     -o "$THUMBS_DIR/$RECIPE_NAME" "$URL" 2>/dev/null || true
 
-# Rename .image to .jpg if needed
-THUMB_IMAGE="$THUMBS_DIR/$RECIPE_NAME.image"
-THUMB_JPG="$THUMBS_DIR/$RECIPE_NAME.jpg"
-if [ -f "$THUMB_IMAGE" ]; then
-    mv "$THUMB_IMAGE" "$THUMB_JPG"
-fi
+# Rename thumbnail to .jpg regardless of original extension (.image, .webp, .png, etc.)
 THUMB_PATH=""
+THUMB_JPG="$THUMBS_DIR/$RECIPE_NAME.jpg"
+for ext in image webp png jpeg jpg; do
+    THUMB_FILE="$THUMBS_DIR/$RECIPE_NAME.$ext"
+    if [ -f "$THUMB_FILE" ] && [ "$THUMB_FILE" != "$THUMB_JPG" ]; then
+        mv "$THUMB_FILE" "$THUMB_JPG"
+        break
+    fi
+done
 if [ -f "$THUMB_JPG" ]; then
     THUMB_PATH="thumbnails/$RECIPE_NAME.jpg"
 fi
@@ -86,7 +92,7 @@ fi
 # Run through fabric
 echo "Extracting recipe with fabric..."
 RECIPE_FILE="$RECIPES_DIR/$RECIPE_NAME.md"
-echo "$CONTENT" | fabric --pattern extract_creami_recipe > "$RECIPE_FILE"
+echo "$CONTENT" | fabric-ai --pattern extract_creami_recipe > "$RECIPE_FILE"
 
 # Build metadata footer in .md
 {
