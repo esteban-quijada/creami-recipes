@@ -8,20 +8,33 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
         :root {
-            --bg: #0a0a0b;
-            --surface: #141416;
-            --surface-2: #1c1c1f;
-            --surface-3: #242428;
-            --border: rgba(255,255,255,0.08);
-            --border-hover: rgba(255,255,255,0.15);
-            --text: #f0f0f2;
-            --text-secondary: #8a8a8e;
-            --text-tertiary: #5a5a5e;
-            --accent: #6c5ce7;
-            --accent-2: #a29bfe;
-            --accent-glow: rgba(108,92,231,0.15);
-            --gradient: linear-gradient(135deg, #6c5ce7, #a29bfe, #74b9ff);
+            /* ElevenLabs-inspired light theme */
+            --bg: #fdfcfc;
+            --surface: #ffffff;
+            --surface-2: #f5f3f1;
+            --surface-3: #e5e5e5;
+            --border: rgba(0,0,0,0.08);
+            --border-hover: rgba(0,0,0,0.15);
+            --text: #000000;
+            --text-secondary: #777169;
+            --text-tertiary: #a59f97;
+
+            --accent: #E45512;
+            --accent-2: #F58633;
+            --accent-glow: rgba(228,85,18,0.10);
+
+            --gradient: linear-gradient(135deg, var(--accent), var(--accent-2));
             --sidebar-width: 320px;
+
+            /* Motion tokens from ElevenLabs extraction */
+            --duration-xs: 150ms;
+            --duration-sm: 200ms;
+            --duration-md: 300ms;
+            --ease-out: cubic-bezier(0.31, 0.325, 0, 0.92);
+
+            /* Shadows from ElevenLabs extraction */
+            --shadow-card: rgba(0,0,0,0.06) 0px 0px 0px 1px, rgba(0,0,0,0.04) 0px 1px 2px 0px, rgba(0,0,0,0.04) 0px 2px 4px 0px;
+            --shadow-elevated: rgba(78,50,23,0.04) 0px 6px 16px 0px;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -93,7 +106,7 @@
             overflow-y: auto;
             flex: 1;
             scrollbar-width: thin;
-            scrollbar-color: var(--surface-3) transparent;
+            scrollbar-color: var(--surface-3) var(--surface);
         }
 
         .recipe-group-title {
@@ -192,11 +205,11 @@
             display: inline-block;
             padding: 4px 12px;
             background: var(--accent-glow);
-            border: 1px solid rgba(108,92,231,0.2);
-            border-radius: 20px;
+            border: 1px solid var(--border);
+            border-radius: 9999px;
             font-size: 0.75rem;
             font-weight: 500;
-            color: var(--accent-2);
+            color: var(--accent);
             margin-bottom: 24px;
         }
 
@@ -282,7 +295,7 @@
 
         .thumbnail-link:hover img {
             transform: scale(1.02);
-            filter: brightness(0.7);
+            filter: brightness(0.85);
         }
 
         .thumbnail-link .play-overlay {
@@ -302,7 +315,7 @@
         .thumbnail-link .play-btn {
             width: 64px;
             height: 64px;
-            background: rgba(255,255,255,0.9);
+            background: rgba(0,0,0,0.75);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -312,7 +325,7 @@
         .thumbnail-link .play-btn svg {
             width: 24px;
             height: 24px;
-            fill: var(--bg);
+            fill: #ffffff;
             margin-left: 3px;
         }
 
@@ -496,11 +509,12 @@
             border-radius: 12px;
             overflow: hidden;
             cursor: pointer;
-            transition: border-color 0.2s, transform 0.2s;
+            box-shadow: var(--shadow-card);
+            transition: box-shadow var(--duration-sm) var(--ease-out), transform var(--duration-sm) var(--ease-out);
         }
 
         .recipe-card:hover {
-            border-color: var(--border-hover);
+            box-shadow: var(--shadow-elevated);
             transform: translateY(-2px);
         }
 
@@ -611,6 +625,101 @@
             margin-bottom: 8px;
         }
 
+        /* Theme Picker */
+        .theme-picker {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            z-index: 100;
+        }
+
+        .theme-picker-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 9999px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            box-shadow: var(--shadow-card);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: box-shadow var(--duration-sm) var(--ease-out);
+        }
+
+        .theme-picker-btn:hover {
+            box-shadow: var(--shadow-elevated);
+        }
+
+        .theme-picker-btn svg {
+            width: 18px;
+            height: 18px;
+            stroke: var(--text-secondary);
+            fill: none;
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .theme-dropdown {
+            display: none;
+            position: absolute;
+            top: 48px;
+            right: 0;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: var(--shadow-elevated);
+            padding: 8px;
+            min-width: 180px;
+        }
+
+        .theme-dropdown.open {
+            display: block;
+        }
+
+        .theme-dropdown-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-tertiary);
+            padding: 4px 8px 8px;
+        }
+
+        .theme-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            transition: background var(--duration-xs);
+        }
+
+        .theme-option:hover {
+            background: var(--surface-2);
+        }
+
+        .theme-option.active {
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .theme-swatch {
+            width: 20px;
+            height: 20px;
+            border-radius: 9999px;
+            border: 2px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .theme-option.active .theme-swatch {
+            border-color: var(--text);
+        }
+
         /* Mobile */
         @media (max-width: 768px) {
             body { flex-direction: column; }
@@ -627,6 +736,16 @@
     </style>
 </head>
 <body>
+
+<div class="theme-picker">
+    <button class="theme-picker-btn" onclick="toggleThemeMenu()" aria-label="Change theme">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.9 0 1.7-.1 2.5-.3C11.2 20.4 9 17.5 9 14c0-4.4 3.6-8 8-8 1 0 2 .2 2.9.5C18.8 3.7 15.7 2 12 2z"/><circle cx="7.5" cy="10.5" r="1.5"/><circle cx="12" cy="7.5" r="1.5"/><circle cx="16.5" cy="10.5" r="1.5"/><circle cx="9" cy="15" r="1.5"/></svg>
+    </button>
+    <div class="theme-dropdown" id="themeDropdown">
+        <div class="theme-dropdown-title">Theme</div>
+        <div id="themeOptions"></div>
+    </div>
+</div>
 
 <div class="sidebar">
     <div class="sidebar-header" style="cursor:pointer;" onclick="showHome()">
@@ -652,6 +771,56 @@
 </div>
 
 <script>
+// --- THEME SYSTEM ---
+const THEMES = [
+    { name: 'Mango',      accent: '#E45512', accent2: '#F58633', glow: 'rgba(228,85,18,0.10)' },
+    { name: 'Mint',        accent: '#1FAD9D', accent2: '#37C8B5', glow: 'rgba(31,173,157,0.10)' },
+    { name: 'Blueberry',   accent: '#4056CE', accent2: '#7294E3', glow: 'rgba(64,86,206,0.10)' },
+    { name: 'Strawberry',  accent: '#D7332B', accent2: '#F57A74', glow: 'rgba(215,51,43,0.10)' },
+    { name: 'Grape',       accent: '#9139B7', accent2: '#CF94EC', glow: 'rgba(145,57,183,0.10)' },
+    { name: 'Pistachio',   accent: '#059661', accent2: '#2DD28D', glow: 'rgba(5,150,97,0.10)' },
+];
+
+let currentTheme = localStorage.getItem('creami-theme') || THEMES[0]?.name || '';
+
+function applyTheme(themeName) {
+    const theme = THEMES.find(t => t.name === themeName);
+    if (!theme) return;
+    const root = document.documentElement.style;
+    root.setProperty('--accent', theme.accent);
+    root.setProperty('--accent-2', theme.accent2);
+    root.setProperty('--accent-glow', theme.glow);
+    currentTheme = theme.name;
+    localStorage.setItem('creami-theme', theme.name);
+    renderThemeOptions();
+}
+
+function renderThemeOptions() {
+    const container = document.getElementById('themeOptions');
+    container.innerHTML = THEMES.map(t => `
+        <div class="theme-option ${t.name === currentTheme ? 'active' : ''}" onclick="applyTheme('${t.name}')">
+            <div class="theme-swatch" style="background:${t.accent}"></div>
+            ${t.name}
+        </div>
+    `).join('');
+}
+
+function toggleThemeMenu() {
+    document.getElementById('themeDropdown').classList.toggle('open');
+}
+
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.theme-picker')) {
+        document.getElementById('themeDropdown').classList.remove('open');
+    }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    renderThemeOptions();
+    if (currentTheme) applyTheme(currentTheme);
+});
+
+// --- RECIPE DATA ---
 let db = [];
 
 const tips = [
