@@ -1,0 +1,86 @@
+[
+  {
+    "category": "Protein Ice Cream",
+    "recipes": [
+      {
+        "title": "Cake Batter Protein Ice Cream",
+        "videoId": "",
+        "tiktok": "https://www.tiktok.com/@fitnessproductfinder/video/7250954825070955818",
+        "thumbnail": "thumbnails/cake-batter-protein-ice-cream.jpg",
+        "desc": "A high-protein cake batter flavored ice cream at only 135 calories with 22g protein.",
+        "baseType": "Lite Ice Cream",
+        "ingredients": [
+          "240g (1 cup) unsweetened vanilla almond milk",
+          "170g (1 scoop) vanilla protein powder",
+          "15g (1 tbsp) sugar-free cheesecake pudding mix",
+          "5g (1 tsp) vanilla extract",
+          "15g (1 tbsp) sprinkles"
+        ],
+        "steps": [
+          "Add 240g (1 cup) unsweetened vanilla almond milk, 170g (1 scoop) vanilla protein powder, 15g (1 tbsp) sugar-free cheesecake pudding mix, and 5g (1 tsp) vanilla extract to a bowl.",
+          "Mix until smooth and fully combined.",
+          "Pour into the Ninja Creami pint container.",
+          "Freeze for 24 hours.",
+          "Remove from freezer and run on the Lite Ice Cream setting.",
+          "Add 15g (1 tbsp) sprinkles to the top and run the Mix-in program.",
+          "Re-spin on Lite Ice Cream if needed for a creamier texture."
+        ],
+        "notes": [
+          "Swap sprinkles for crushed cookies or chocolate chips for different variations."
+        ]
+      },
+      {
+        "title": "PB Salted Caramel Protein Ice Cream",
+        "videoId": "",
+        "tiktok": "https://www.tiktok.com/@fitnessproductfinder/video/7281387573447019807",
+        "thumbnail": "thumbnails/pb-caramel-protein-ice-cream.jpg",
+        "desc": "A high-protein peanut butter salted caramel ice cream with a Barebells protein bar mix-in, yielding 465 calories and 45g protein.",
+        "baseType": "Lite Ice Cream",
+        "ingredients": [
+          "400g (about 1\u2154 cups) Fat Free Fairlife Milk",
+          "40\u201345g (about 3\u2153 to 3\u00be tbsp) 1:1 sugar substitute",
+          "8g (1 tbsp) PB powder (like PB Fit or PB2)",
+          "2g (\u00bd tsp) salt",
+          "1g (\u00bc tsp) xanthan gum",
+          "1 Soft Barebells Peanut Caramel Protein Bar (mix-in)"
+        ],
+        "steps": [
+          "Add 400g (about 1\u2154 cups) Fat Free Fairlife Milk, 40\u201345g (about 3\u2153 to 3\u00be tbsp) 1:1 sugar substitute, 8g (1 tbsp) PB powder, 2g (\u00bd tsp) salt, and 1g (\u00bc tsp) xanthan gum to a blender. Blend all ingredients for the base.",
+          "Pour the mixture into a Ninja Creami pint container and freeze for at least 16 hours.",
+          "Before processing, run the frozen pint under hot water for at least 60 seconds.",
+          "Process on the Lite Ice Cream setting.",
+          "Process again on the Respin setting.",
+          "If the texture is still powdery after the respin, re-spin again.",
+          "Make a hole down to the bottom of the pint with a butter knife and fill with 1 Soft Barebells Peanut Caramel Protein Bar.",
+          "Process on the Mix-in cycle."
+        ],
+        "notes": []
+      },
+      {
+        "title": "Strawberry Protein Ice Cream",
+        "videoId": "",
+        "tiktok": "https://www.tiktok.com/@fitnessproductfinder/video/7271388380817116462",
+        "thumbnail": "thumbnails/strawberry-protein-ice-cream.jpg",
+        "desc": "A simple strawberry protein ice cream with just 250 calories and 23g of protein.",
+        "baseType": "Lite Ice Cream",
+        "ingredients": [
+          "340g (11.5 fl oz / 1 bottle) Fairlife Strawberry Milk or Strawberry Protein Shake",
+          "10\u201315g sweetener",
+          "1g (\u00bc tsp) salt",
+          "1g (\u00bc tsp) xanthan gum"
+        ],
+        "steps": [
+          "Blend 340g (11.5 fl oz / 1 bottle) Fairlife Strawberry Milk, 10\u201315g sweetener, 1g (\u00bc tsp) salt, and 1g (\u00bc tsp) xanthan gum for the base.",
+          "Freeze the blended mixture for at least 16 hours in a Ninja Creami pint container.",
+          "Before processing, run the frozen pint under hot water for at least 60 seconds.",
+          "Spin the pint on the Lite Ice Cream setting.",
+          "Spin the pint again on the Respin setting.",
+          "Respin again if the texture is powdery after the second spin."
+        ],
+        "notes": [
+          "Approximately 250 calories, 21g carbs, 8g fat, and 23g protein."
+        ]
+      }
+    ]
+  }
+]
