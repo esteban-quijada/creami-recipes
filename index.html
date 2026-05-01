@@ -48,18 +48,73 @@
             overflow: hidden;
         }
 
+        /* Sidebar Toggle */
+        .sidebar-toggle {
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 200;
+            width: 40px;
+            height: 40px;
+            border-radius: 9999px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            box-shadow: var(--shadow-card);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: box-shadow var(--duration-sm) var(--ease-out);
+        }
+
+        .sidebar-toggle:hover {
+            box-shadow: var(--shadow-elevated);
+        }
+
+        .sidebar-toggle svg {
+            width: 18px;
+            height: 18px;
+            stroke: var(--text-secondary);
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+        }
+
+        /* Sidebar Overlay (mobile backdrop) */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.3);
+            z-index: 90;
+        }
+
+        .sidebar-overlay.visible {
+            display: block;
+        }
+
         /* Sidebar */
         .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: var(--sidebar-width);
+            height: 100vh;
             background: var(--surface);
             border-right: 1px solid var(--border);
             display: flex;
             flex-direction: column;
-            flex-shrink: 0;
+            z-index: 100;
+            transform: translateX(0);
+            transition: transform var(--duration-md) var(--ease-out);
+        }
+
+        .sidebar.collapsed {
+            transform: translateX(-100%);
         }
 
         .sidebar-header {
-            padding: 24px 20px;
+            padding: 24px 20px 24px 64px;
             border-bottom: 1px solid var(--border);
         }
 
@@ -174,9 +229,15 @@
         .main {
             flex: 1;
             padding: 40px;
+            padding-left: calc(var(--sidebar-width) + 40px);
             overflow-y: auto;
             display: flex;
             justify-content: center;
+            transition: padding-left var(--duration-md) var(--ease-out);
+        }
+
+        body.sidebar-collapsed .main {
+            padding-left: 40px;
         }
 
         .container {
@@ -722,20 +783,26 @@
 
         /* Mobile */
         @media (max-width: 768px) {
-            body { flex-direction: column; }
             .sidebar {
-                width: 100%;
-                height: 45vh;
-                border-right: none;
-                border-bottom: 1px solid var(--border);
+                width: 280px;
             }
-            .main { padding: 20px; }
+            .main {
+                padding: 20px;
+                padding-left: 20px;
+            }
+            .sidebar:not(.collapsed) ~ .main {
+                padding-left: 20px;
+            }
             .recipe-title { font-size: 1.5rem; }
             .hero h1 { font-size: 2rem; }
         }
     </style>
 </head>
 <body>
+
+<button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle sidebar">
+    <svg viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+</button>
 
 <div class="theme-picker">
     <button class="theme-picker-btn" onclick="toggleThemeMenu()" aria-label="Change theme">
@@ -746,6 +813,8 @@
         <div id="themeOptions"></div>
     </div>
 </div>
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
 <div class="sidebar">
     <div class="sidebar-header" style="cursor:pointer;" onclick="showHome()">
@@ -818,6 +887,33 @@ document.addEventListener('click', (e) => {
 document.addEventListener('DOMContentLoaded', () => {
     renderThemeOptions();
     if (currentTheme) applyTheme(currentTheme);
+});
+
+// --- SIDEBAR ---
+const sidebar = document.querySelector('.sidebar');
+const overlay = document.getElementById('sidebarOverlay');
+const isMobile = () => window.innerWidth <= 768;
+
+function toggleSidebar() {
+    sidebar.classList.toggle('collapsed');
+    document.body.classList.toggle('sidebar-collapsed');
+    overlay.classList.toggle('visible', !sidebar.classList.contains('collapsed') && isMobile());
+}
+
+function closeSidebarOnMobile() {
+    if (isMobile() && !sidebar.classList.contains('collapsed')) {
+        toggleSidebar();
+    }
+}
+
+// Start collapsed on mobile, open on desktop
+if (isMobile()) {
+    sidebar.classList.add('collapsed');
+    document.body.classList.add('sidebar-collapsed');
+}
+
+window.addEventListener('resize', () => {
+    overlay.classList.toggle('visible', !sidebar.classList.contains('collapsed') && isMobile());
 });
 
 // --- RECIPE DATA ---
@@ -920,7 +1016,7 @@ function renderSidebar() {
             const li = document.createElement('li');
             li.className = 'recipe-item';
             li.innerText = recipe.title;
-            li.onclick = () => loadRecipe(gi, ri);
+            li.onclick = () => { loadRecipe(gi, ri); closeSidebarOnMobile(); };
             li.dataset.g = gi;
             li.dataset.r = ri;
             li.dataset.search = (recipe.title + ' ' + recipe.ingredients.join(' ')).toLowerCase();
