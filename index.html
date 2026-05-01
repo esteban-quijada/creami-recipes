@@ -839,12 +839,13 @@ function loadRecipe(gi, ri) {
             ).join('')}</div>`;
         }
 
+        const scaleMacro = v => v != null ? Math.round(v * factor) : null;
         const detailPills = [
-            sm.calories != null ? `<span class="macro-pill cal">${sm.calories} cal</span>` : '',
-            sm.protein != null ? `<span class="macro-pill">${sm.protein}g protein</span>` : '',
-            sm.fat != null ? `<span class="macro-pill">${sm.fat}g fat</span>` : '',
-            sm.carbs != null ? `<span class="macro-pill">${sm.carbs}g carbs</span>` : '',
-            sm.sugar != null ? `<span class="macro-pill">${sm.sugar}g sugar</span>` : ''
+            sm.calories != null ? `<span class="macro-pill cal">${scaleMacro(sm.calories)} cal</span>` : '',
+            sm.protein != null ? `<span class="macro-pill">${scaleMacro(sm.protein)}g protein</span>` : '',
+            sm.fat != null ? `<span class="macro-pill">${scaleMacro(sm.fat)}g fat</span>` : '',
+            sm.carbs != null ? `<span class="macro-pill">${scaleMacro(sm.carbs)}g carbs</span>` : '',
+            sm.sugar != null ? `<span class="macro-pill">${scaleMacro(sm.sugar)}g sugar</span>` : ''
         ].filter(Boolean).join('');
 
         macroBarHTML = `<div class="macro-bar">${toggleHTML}${detailPills}</div>`;
