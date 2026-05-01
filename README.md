@@ -27,6 +27,22 @@ git push
 
 The website updates automatically on GitHub Pages after push.
 
+## Local Development
+
+The site fetches `recipes.json` at runtime, which requires an HTTP server (browsers block `fetch()` on `file://` URLs).
+
+```bash
+# Start a local server
+cd creami-recipes
+python3 -m http.server 8080
+
+# Open in browser
+open http://localhost:8080
+
+# Edit index.html, save, refresh browser to see changes
+# Ctrl+C to stop the server when done
+```
+
 ## How It Works
 
 ```
@@ -45,7 +61,8 @@ The extraction script (`extract-recipe.sh`) handles the full pipeline: downloads
 
 ## Website Features
 
-- Dark theme with recipe sidebar, search, and category grouping
+- Light theme (ElevenLabs-inspired) with recipe sidebar, search, and category grouping
+- Theme picker with six flavor-named color palettes (Mango, Mint, Blueberry, Strawberry, Grape, Pistachio)
 - Ingredients with checkboxes and dual-unit format (grams + volume)
 - Numbered steps with inline measurements
 - Standard (16 oz) / Deluxe (24 oz) size toggle that scales all quantities
