@@ -7,28 +7,30 @@
         "videoId": "",
         "tiktok": "https://www.tiktok.com/@fitnessproductfinder/video/7250954825070955818",
         "thumbnail": "thumbnails/cake-batter-protein-ice-cream.jpg",
-        "desc": "A high-protein cake batter flavored ice cream at only 135 calories with 22g protein.",
+        "desc": "A high-protein cake batter flavored ice cream using Fat Free Fairlife Milk and cake batter extract.",
         "baseType": "Lite Ice Cream",
-        "macros": { "calories": 135, "protein": 22, "fat": 2, "carbs": 8, "sugar": 3 },
+        "macros": [
+          { "label": "Without mix-ins", "calories": 135, "protein": 22 },
+          { "label": "With mix-ins", "calories": 270, "protein": 24, "fat": 6, "carbs": 29 }
+        ],
         "ingredients": [
-          "240g (1 cup) unsweetened vanilla almond milk",
-          "170g (1 scoop) vanilla protein powder",
-          "15g (1 tbsp) sugar-free cheesecake pudding mix",
-          "5g (1 tsp) vanilla extract",
-          "15g (1 tbsp) sprinkles"
+          "400g (about 1⅔ cups) Fat Free Fairlife Milk",
+          "45g (about 3¾ tbsp) sweetener",
+          "5g (1 tsp) cake batter extract",
+          "1g (¼ tsp) salt",
+          "1g (¼ tsp) xanthan gum",
+          "35g cake pieces or mini muffins (mix-in)"
         ],
         "steps": [
-          "Add 240g (1 cup) unsweetened vanilla almond milk, 170g (1 scoop) vanilla protein powder, 15g (1 tbsp) sugar-free cheesecake pudding mix, and 5g (1 tsp) vanilla extract to a bowl.",
-          "Mix until smooth and fully combined.",
-          "Pour into the Ninja Creami pint container.",
-          "Freeze for 24 hours.",
-          "Remove from freezer and run on the Lite Ice Cream setting.",
-          "Add 15g (1 tbsp) sprinkles to the top and run the Mix-in program.",
-          "Re-spin on Lite Ice Cream if needed for a creamier texture."
+          "Blend 400g (about 1⅔ cups) Fat Free Fairlife Milk, 45g (about 3¾ tbsp) sweetener, 5g (1 tsp) cake batter extract, 1g (¼ tsp) salt, and 1g (¼ tsp) xanthan gum for the base.",
+          "Pour into the Ninja Creami pint container and freeze for at least 16 hours.",
+          "Spin on the Lite Ice Cream setting.",
+          "Spin on the Respin setting.",
+          "Respin again if powdery.",
+          "Make a hole down to the bottom with a butter knife and fill with 35g cake pieces or mini muffins.",
+          "Run the Mix-in cycle."
         ],
-        "notes": [
-          "Swap sprinkles for crushed cookies or chocolate chips for different variations."
-        ]
+        "notes": []
       },
       {
         "title": "PB Salted Caramel Protein Ice Cream",
@@ -37,7 +39,9 @@
         "thumbnail": "thumbnails/pb-caramel-protein-ice-cream.jpg",
         "desc": "A high-protein peanut butter salted caramel ice cream with a Barebells protein bar mix-in, yielding 465 calories and 45g protein.",
         "baseType": "Lite Ice Cream",
-        "macros": { "calories": 465, "protein": 45, "fat": 12, "carbs": 40, "sugar": 15 },
+        "macros": [
+          { "label": "With mix-ins", "calories": 465, "protein": 45, "fat": 12, "carbs": 40, "sugar": 15 }
+        ],
         "ingredients": [
           "400g (about 1⅔ cups) Fat Free Fairlife Milk",
           "40–45g (about 3⅓ to 3¾ tbsp) 1:1 sugar substitute",
@@ -65,7 +69,9 @@
         "thumbnail": "thumbnails/strawberry-protein-ice-cream.jpg",
         "desc": "A simple strawberry protein ice cream with just 250 calories and 23g of protein.",
         "baseType": "Lite Ice Cream",
-        "macros": { "calories": 250, "protein": 23, "fat": 8, "carbs": 21, "sugar": 16 },
+        "macros": [
+          { "label": "Whole pint", "calories": 250, "protein": 23, "fat": 8, "carbs": 21, "sugar": 16 }
+        ],
         "ingredients": [
           "340g (11.5 fl oz / 1 bottle) Fairlife Strawberry Milk or Strawberry Protein Shake",
           "10–15g sweetener",
@@ -96,7 +102,9 @@
         "thumbnail": "thumbnails/perfect-oreo-ice-cream.jpg",
         "desc": "This recipe aims to create an ice cream that tastes like real cookies and cream while having the macros to eat it every day, featuring a unique technique for soft Oreo chunks.",
         "baseType": "Lite Ice Cream",
-        "macros": { "calories": 350, "protein": 40, "fat": 6, "carbs": 35, "sugar": 18 },
+        "macros": [
+          { "label": "With mix-ins", "calories": 350, "protein": 40, "fat": 6, "carbs": 35, "sugar": 18 }
+        ],
         "ingredients": [
           "1 whole Oreo",
           "410g (about 1⅔ cups) fat-free high protein milk",

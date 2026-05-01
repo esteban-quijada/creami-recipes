@@ -548,6 +548,50 @@
             color: var(--accent-2);
         }
 
+        /* Macro bar on recipe detail */
+        .macro-bar {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .macro-bar .macro-pill {
+            font-size: 0.78rem;
+            padding: 5px 10px;
+        }
+
+        .macro-variant-toggle {
+            display: inline-flex;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-right: 8px;
+        }
+
+        .macro-variant-toggle button {
+            padding: 5px 12px;
+            background: none;
+            border: none;
+            color: var(--text-tertiary);
+            font-size: 0.72rem;
+            font-family: inherit;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .macro-variant-toggle button.active {
+            background: var(--accent);
+            color: white;
+        }
+
+        .macro-variant-toggle button:hover:not(.active) {
+            color: var(--text);
+        }
+
         @media (max-width: 768px) {
             .card-grid { grid-template-columns: 1fr; }
         }
@@ -625,6 +669,7 @@ const tips = [
 const SCALE_FACTOR = 1.5;
 let currentSize = 'standard';
 let currentRecipe = null;
+let currentMacroVariant = 0;
 
 const FRACTION_MAP = {
     '\u00bc': 0.25, '\u00bd': 0.5, '\u00be': 0.75,
@@ -685,6 +730,11 @@ function setSize(size) {
     if (currentRecipe) loadRecipe(currentRecipe[0], currentRecipe[1]);
 }
 
+function setMacroVariant(idx) {
+    currentMacroVariant = idx;
+    if (currentRecipe) loadRecipe(currentRecipe[0], currentRecipe[1]);
+}
+
 // --- APP LOGIC ---
 const recipeListEl = document.getElementById('recipeList');
 const contentAreaEl = document.getElementById('contentArea');
@@ -727,6 +777,9 @@ function filterRecipes() {
 }
 
 function loadRecipe(gi, ri) {
+    if (!currentRecipe || currentRecipe[0] !== gi || currentRecipe[1] !== ri) {
+        currentMacroVariant = 0;
+    }
     currentRecipe = [gi, ri];
     const r = db[gi].recipes[ri];
     const factor = currentSize === 'deluxe' ? SCALE_FACTOR : 1;
@@ -772,6 +825,31 @@ function loadRecipe(gi, ri) {
     const stdClass = currentSize === 'standard' ? 'active' : '';
     const dlxClass = currentSize === 'deluxe' ? 'active' : '';
 
+    // Macro variants
+    const macrosList = Array.isArray(r.macros) ? r.macros : (r.macros && r.macros.calories != null ? [r.macros] : []);
+    let macroBarHTML = '';
+    if (macrosList.length > 0) {
+        const selectedIdx = typeof currentMacroVariant === 'number' && currentMacroVariant < macrosList.length ? currentMacroVariant : 0;
+        const sm = macrosList[selectedIdx];
+
+        let toggleHTML = '';
+        if (macrosList.length > 1) {
+            toggleHTML = `<div class="macro-variant-toggle">${macrosList.map((v, i) =>
+                `<button class="${i === selectedIdx ? 'active' : ''}" onclick="setMacroVariant(${i})">${v.label}</button>`
+            ).join('')}</div>`;
+        }
+
+        const detailPills = [
+            sm.calories != null ? `<span class="macro-pill cal">${sm.calories} cal</span>` : '',
+            sm.protein != null ? `<span class="macro-pill">${sm.protein}g protein</span>` : '',
+            sm.fat != null ? `<span class="macro-pill">${sm.fat}g fat</span>` : '',
+            sm.carbs != null ? `<span class="macro-pill">${sm.carbs}g carbs</span>` : '',
+            sm.sugar != null ? `<span class="macro-pill">${sm.sugar}g sugar</span>` : ''
+        ].filter(Boolean).join('');
+
+        macroBarHTML = `<div class="macro-bar">${toggleHTML}${detailPills}</div>`;
+    }
+
     contentAreaEl.innerHTML = `
         <span class="recipe-meta">${r.baseType}</span>
         <div class="size-toggle">
@@ -780,6 +858,7 @@ function loadRecipe(gi, ri) {
         </div>
         <h1 class="recipe-title">${r.title}</h1>
         <p class="recipe-desc">${r.desc}</p>
+        ${macroBarHTML}
         ${videoHTML}
 
         <div class="section">
@@ -810,16 +889,16 @@ function showHome() {
         group.recipes.forEach((r, ri) => {
             const thumbSrc = r.thumbnail || (r.videoId ? `https://img.youtube.com/vi/${r.videoId}/mqdefault.jpg` : '');
             const imgHTML = thumbSrc ? `<img src="${thumbSrc}" alt="${r.title}">` : '';
-            const m = r.macros || {};
-            const macrosHTML = m.calories != null ? `
-                <div class="recipe-card-macros">
-                    <span class="macro-pill cal">${m.calories} cal</span>
-                    <span class="macro-pill">${m.protein}g protein</span>
-                    <span class="macro-pill">${m.fat}g fat</span>
-                    <span class="macro-pill">${m.carbs}g carbs</span>
-                    <span class="macro-pill">${m.sugar}g sugar</span>
-                </div>
-            ` : '';
+            const macrosList = Array.isArray(r.macros) ? r.macros : (r.macros && r.macros.calories != null ? [r.macros] : []);
+            const m = macrosList[0] || {};
+            const pills = [
+                m.calories != null ? `<span class="macro-pill cal">${m.calories} cal</span>` : '',
+                m.protein != null ? `<span class="macro-pill">${m.protein}g protein</span>` : '',
+                m.fat != null ? `<span class="macro-pill">${m.fat}g fat</span>` : '',
+                m.carbs != null ? `<span class="macro-pill">${m.carbs}g carbs</span>` : '',
+                m.sugar != null ? `<span class="macro-pill">${m.sugar}g sugar</span>` : ''
+            ].filter(Boolean).join('');
+            const macrosHTML = pills ? `<div class="recipe-card-macros">${pills}</div>` : '';
 
             cardsHTML += `
                 <div class="recipe-card" onclick="loadRecipe(${gi}, ${ri})">

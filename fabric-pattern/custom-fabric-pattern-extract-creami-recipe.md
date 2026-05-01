@@ -14,7 +14,7 @@ Take a step back and think step-by-step about how to extract the most accurate a
   - The base type (ice cream, gelato, sorbet, frozen yogurt, lite ice cream, milkshake, smoothie bowl, mix-in, etc.)
   - All ingredients with exact measurements in both grams and volume/count format: "Xg (Y cups/tbsp/tsp) ingredient" (e.g., "615g (about 2½ cups) 2% milk"). If only one unit is provided in the source, include that unit and convert to the other. Grams always come first.
   - All steps as a single sequential list combining preparation, freezing, Creami processing, and mix-ins in the order they are performed. Each step should be a full sentence describing the action, including relevant details like program settings, spin counts, and timing. When an ingredient is referenced in a step, include its measurement inline (e.g., "Add 615g (about 2½ cups) 2% milk" not just "Add the milk").
-  - Estimated macros for the entire pint if mentioned or calculable: calories, protein (g), fat (g), carbs (g), sugar (g)
+  - Estimated macros for the entire pint if mentioned or calculable: calories, protein (g), fat (g), carbs (g), sugar (g). If multiple macro variants are provided (e.g., "without mix-ins" vs "with mix-ins"), list each variant separately with a label.
   - Any tips or notes the creator mentions
 
 # OUTPUT INSTRUCTIONS
@@ -65,11 +65,25 @@ Example:
 
 ### Macros
 
-- **Calories:** [number]
-- **Protein:** [number]g
-- **Fat:** [number]g
-- **Carbs:** [number]g
-- **Sugar:** [number]g
+If only one set of macros, list them directly. If multiple variants exist (e.g., with/without mix-ins), use a labeled sub-heading for each.
+
+Single variant example:
+- **Calories:** 250
+- **Protein:** 23g
+- **Fat:** 8g
+- **Carbs:** 21g
+- **Sugar:** 16g
+
+Multiple variants example:
+#### Without mix-ins
+- **Calories:** 135
+- **Protein:** 22g
+
+#### With mix-ins
+- **Calories:** 270
+- **Protein:** 24g
+- **Fat:** 6g
+- **Carbs:** 29g
 
 ### Notes
 

@@ -175,15 +175,34 @@ if steps_match:
         if step:
             steps.append(step)
 
-# Parse macros
-macros = {}
+# Parse macros (single or multiple variants)
+macros = []
 macros_match = re.search(r"### Macros\s*\n(.*?)(?=\n###|\n---|\Z)", md, re.DOTALL)
 if macros_match:
     macros_text = macros_match.group(1)
-    for key in ["Calories", "Protein", "Fat", "Carbs", "Sugar"]:
-        m = re.search(rf"\*\*{key}:\*\*\s*(\d+)", macros_text)
-        if m:
-            macros[key.lower()] = int(m.group(1))
+    # Check for variant sub-headings (#### Label)
+    variants = re.split(r"\n####\s+", macros_text)
+    if len(variants) > 1:
+        # Multiple variants: first element is any text before the first ####
+        for v in variants[1:]:
+            lines = v.strip().split("\n")
+            label = lines[0].strip()
+            entry = {"label": label}
+            block = "\n".join(lines[1:])
+            for key in ["Calories", "Protein", "Fat", "Carbs", "Sugar"]:
+                m = re.search(rf"\*\*{key}:\*\*\s*(\d+)", block)
+                if m:
+                    entry[key.lower()] = int(m.group(1))
+            macros.append(entry)
+    else:
+        # Single variant
+        entry = {"label": "Whole pint"}
+        for key in ["Calories", "Protein", "Fat", "Carbs", "Sugar"]:
+            m = re.search(rf"\*\*{key}:\*\*\s*(\d+)", macros_text)
+            if m:
+                entry[key.lower()] = int(m.group(1))
+        if len(entry) > 1:
+            macros.append(entry)
 
 # Parse notes
 notes = []
@@ -201,7 +220,7 @@ recipe = {
     "thumbnail": thumbnail,
     "desc": desc,
     "baseType": base_type,
-    "macros": macros if macros else {},
+    "macros": macros,
     "ingredients": ingredients,
     "steps": steps,
     "notes": notes
