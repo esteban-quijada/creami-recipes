@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creami Recipes</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --bg: #0a0a0b;
+            --surface: #141416;
+            --surface-2: #1c1c1f;
+            --surface-3: #242428;
+            --border: rgba(255,255,255,0.08);
+            --border-hover: rgba(255,255,255,0.15);
+            --text: #f0f0f2;
+            --text-secondary: #8a8a8e;
+            --text-tertiary: #5a5a5e;
+            --accent: #6c5ce7;
+            --accent-2: #a29bfe;
+            --accent-glow: rgba(108,92,231,0.15);
+            --gradient: linear-gradient(135deg, #6c5ce7, #a29bfe, #74b9ff);
+            --sidebar-width: 320px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .sidebar-header {
+            padding: 24px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.02em;
+        }
+
+        .sidebar-header p {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            margin-top: 4px;
+            font-weight: 400;
+        }
+
+        .search-box {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 0.85rem;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-box input::placeholder { color: var(--text-tertiary); }
+        .search-box input:focus { border-color: var(--accent); }
+
+        .recipe-list {
+            list-style: none;
+            overflow-y: auto;
+            flex: 1;
+            scrollbar-width: thin;
+            scrollbar-color: var(--surface-3) transparent;
+        }
+
+        .recipe-group-title {
+            padding: 12px 20px 8px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .recipe-item {
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            transition: all 0.15s;
+            border-left: 3px solid transparent;
+            font-weight: 400;
+        }
+
+        .recipe-item:hover {
+            background: var(--surface-2);
+            color: var(--text);
+        }
+
+        .recipe-item.active {
+            background: var(--accent-glow);
+            color: var(--text);
+            border-left-color: var(--accent);
+            font-weight: 500;
+        }
+
+        .hidden { display: none !important; }
+
+        .sidebar-footer {
+            padding: 16px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .sidebar-footer button {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--surface-2);
+            color: var(--text-secondary);
+            font-size: 0.82rem;
+            font-family: inherit;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .sidebar-footer button:hover {
+            background: var(--surface-3);
+            color: var(--text);
+            border-color: var(--border-hover);
+        }
+
+        /* Main */
+        .main {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 780px;
+            width: 100%;
+            height: fit-content;
+        }
+
+        .recipe-title {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1.2;
+            margin-bottom: 8px;
+        }
+
+        .recipe-desc {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 28px;
+            font-weight: 300;
+            line-height: 1.6;
+        }
+
+        .recipe-meta {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--accent-glow);
+            border: 1px solid rgba(108,92,231,0.2);
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--accent-2);
+            margin-bottom: 24px;
+        }
+
+        /* Video */
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            border-radius: 12px;
+            overflow: hidden;
+            background: var(--surface-2);
+            margin-bottom: 8px;
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            border: none;
+        }
+
+        .video-fallback {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .video-fallback a {
+            color: var(--text-tertiary);
+            font-size: 0.8rem;
+            text-decoration: none;
+            transition: color 0.15s;
+        }
+
+        .video-fallback a:hover { color: var(--accent-2); }
+
+        /* Thumbnail */
+        .thumbnail-link {
+            display: block;
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .thumbnail-link img {
+            width: 100%;
+            display: block;
+            border-radius: 12px;
+            transition: transform 0.3s, filter 0.3s;
+        }
+
+        .thumbnail-link:hover img {
+            transform: scale(1.02);
+            filter: brightness(0.7);
+        }
+
+        .thumbnail-link .play-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .thumbnail-link:hover .play-overlay {
+            opacity: 1;
+        }
+
+        .thumbnail-link .play-btn {
+            width: 64px;
+            height: 64px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .thumbnail-link .play-btn svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--bg);
+            margin-left: 3px;
+        }
+
+        /* Sections */
+        .section {
+            margin-top: 32px;
+        }
+
+        .section-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-tertiary);
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* Ingredients */
+        .ingredient-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .ingredient-list li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            transition: background 0.1s;
+            font-size: 0.9rem;
+        }
+
+        .ingredient-list li:hover { background: var(--surface-2); }
+
+        .ingredient-list input[type="checkbox"] {
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 1.5px solid var(--text-tertiary);
+            border-radius: 4px;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: all 0.15s;
+            position: relative;
+        }
+
+        .ingredient-list input[type="checkbox"]:checked {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .ingredient-list input[type="checkbox"]:checked::after {
+            content: '';
+            position: absolute;
+            left: 5px; top: 2px;
+            width: 5px; height: 9px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        .ingredient-list input[type="checkbox"]:checked + span {
+            text-decoration: line-through;
+            color: var(--text-tertiary);
+        }
+
+        /* Steps */
+        .steps-list {
+            list-style: none;
+            counter-reset: step;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .steps-list li {
+            counter-increment: step;
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 14px 12px;
+            border-radius: 8px;
+            transition: background 0.1s;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
+        .steps-list li:hover { background: var(--surface-2); }
+
+        .steps-list li::before {
+            content: counter(step);
+            min-width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--surface-3);
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-tertiary);
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        /* Notes */
+        .notes-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .notes-list li {
+            padding: 12px 16px;
+            background: var(--surface-2);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            border-left: 3px solid var(--accent);
+        }
+
+        /* Tips page */
+        .tip-card {
+            padding: 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
+        .tip-card strong {
+            color: var(--text);
+        }
+
+        /* Hero / Welcome */
+        .hero {
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 480px;
+            margin: 0 auto;
+            line-height: 1.7;
+            font-weight: 300;
+        }
+
+        /* Shopping list */
+        .shopping-category {
+            margin-top: 24px;
+        }
+
+        .shopping-category-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--accent-2);
+            padding: 8px 12px;
+            background: var(--accent-glow);
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .sidebar {
+                width: 100%;
+                height: 45vh;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+            .main { padding: 20px; }
+            .recipe-title { font-size: 1.5rem; }
+            .hero h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <div class="sidebar-header">
+        <h2>Creami Recipes</h2>
+        <p>Ninja Creami cookbook</p>
+    </div>
+    <div class="search-box">
+        <input type="text" id="recipeSearch" placeholder="Search recipes..." onkeyup="filterRecipes()">
+    </div>
+    <ul class="recipe-list" id="recipeList"></ul>
+    <div class="sidebar-footer">
+        <button onclick="showTips()">Tips & Tricks</button>
+    </div>
+</div>
+
+<div class="main">
+    <div class="container" id="contentArea">
+        <div class="hero">
+            <h1>Creami Recipes</h1>
+            <p>A collection of Ninja Creami recipes extracted from YouTube videos using yt-dlp and fabric-ai.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+const db = [
+    {
+        category: "Protein Ice Cream",
+        recipes: [
+            {
+                title: "Cake Batter Protein Ice Cream",
+                videoId: "",
+                tiktok: "https://www.tiktok.com/@fitnessproductfinder/video/7250954825070955818",
+                thumbnail: "thumbnails/cake-batter-protein-ice-cream.jpg",
+                desc: "A high-protein cake batter flavored ice cream at only 135 calories with 22g protein.",
+                baseType: "Lite Ice Cream",
+                ingredients: [
+                    "240g (1 cup) unsweetened vanilla almond milk",
+                    "170g (1 scoop) vanilla protein powder",
+                    "15g (1 tbsp) sugar-free cheesecake pudding mix",
+                    "5g (1 tsp) vanilla extract",
+                    "15g (1 tbsp) sprinkles"
+                ],
+                steps: [
+                    "Add 240g (1 cup) unsweetened vanilla almond milk, 170g (1 scoop) vanilla protein powder, 15g (1 tbsp) sugar-free cheesecake pudding mix, and 5g (1 tsp) vanilla extract to a bowl.",
+                    "Mix until smooth and fully combined.",
+                    "Pour into the Ninja Creami pint container.",
+                    "Freeze for 24 hours.",
+                    "Remove from freezer and run on the Lite Ice Cream setting.",
+                    "Add 15g (1 tbsp) sprinkles to the top and run the Mix-in program.",
+                    "Re-spin on Lite Ice Cream if needed for a creamier texture."
+                ],
+                notes: [
+                    "Swap sprinkles for crushed cookies or chocolate chips for different variations."
+                ]
+            }
+        ]
+    }
+];
+
+const tips = [
+    { title: "The Hump Fix", body: "If your pint has a frozen hump in the middle, let the liquid settle for 10\u201315 minutes before freezing, or freeze with the lid off for the first hour." },
+    { title: "Icy Walls", body: "Run the pint under hot water for exactly 60 seconds before spinning to prevent icy edges." },
+    { title: "Xanthan Gum", body: "Prevents ice crystals and improves texture. Don't skip it, especially with almond milk bases. Sprinkle in while whisking to avoid clumps." },
+    { title: "Immersion Blender", body: "Use an immersion blender instead of a frother. Frothers introduce too much air and create foam." },
+    { title: "Salt", body: "A small amount of salt enhances sweetness and flavor perception, which is especially important in frozen foods where taste buds are dulled." },
+    { title: "Freeze Time", body: "24 hours is the standard. If you heated the base (e.g. melting chocolate or tempering eggs), freeze for 36 hours instead." },
+    { title: "Re-spinning", body: "If the result is crumbly or icy after the first spin, re-process on the same setting. Scrape down the sides before the second run." }
+];
+
+// --- APP LOGIC ---
+const recipeListEl = document.getElementById('recipeList');
+const contentAreaEl = document.getElementById('contentArea');
+
+function renderSidebar() {
+    recipeListEl.innerHTML = '';
+    db.forEach((group, gi) => {
+        const title = document.createElement('li');
+        title.className = 'recipe-group-title';
+        title.innerText = group.category;
+        recipeListEl.appendChild(title);
+
+        group.recipes.forEach((recipe, ri) => {
+            const li = document.createElement('li');
+            li.className = 'recipe-item';
+            li.innerText = recipe.title;
+            li.onclick = () => loadRecipe(gi, ri);
+            li.dataset.g = gi;
+            li.dataset.r = ri;
+            li.dataset.search = (recipe.title + ' ' + recipe.ingredients.join(' ')).toLowerCase();
+            recipeListEl.appendChild(li);
+        });
+    });
+}
+
+function filterRecipes() {
+    const q = document.getElementById('recipeSearch').value.toLowerCase();
+    document.querySelectorAll('.recipe-item').forEach(item => {
+        item.classList.toggle('hidden', !item.dataset.search.includes(q));
+    });
+    document.querySelectorAll('.recipe-group-title').forEach(title => {
+        let next = title.nextElementSibling;
+        let visible = false;
+        while (next && !next.classList.contains('recipe-group-title')) {
+            if (!next.classList.contains('hidden')) visible = true;
+            next = next.nextElementSibling;
+        }
+        title.style.display = visible ? '' : 'none';
+    });
+}
+
+function loadRecipe(gi, ri) {
+    const r = db[gi].recipes[ri];
+
+    document.querySelectorAll('.recipe-item').forEach(el => el.classList.remove('active'));
+    const active = document.querySelector(`.recipe-item[data-g="${gi}"][data-r="${ri}"]`);
+    if (active) active.classList.add('active');
+    document.querySelector('.main').scrollTop = 0;
+
+    let videoHTML = '';
+    if (r.videoId) {
+        const ytThumb = `https://img.youtube.com/vi/${r.videoId}/maxresdefault.jpg`;
+        videoHTML = `
+            <a class="thumbnail-link" href="https://www.youtube.com/watch?v=${r.videoId}" target="_blank">
+                <img src="${ytThumb}" alt="${r.title}">
+                <div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="6,3 20,12 6,21"/></svg></div></div>
+            </a>
+            <div class="video-fallback"><a href="https://www.youtube.com/watch?v=${r.videoId}" target="_blank">Open in YouTube</a></div>
+        `;
+    } else if (r.tiktok) {
+        const thumbSrc = r.thumbnail || '';
+        videoHTML = thumbSrc ? `
+            <a class="thumbnail-link" href="${r.tiktok}" target="_blank">
+                <img src="${thumbSrc}" alt="${r.title}">
+                <div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="6,3 20,12 6,21"/></svg></div></div>
+            </a>
+            <div class="video-fallback"><a href="${r.tiktok}" target="_blank">Watch on TikTok</a></div>
+        ` : `<div class="video-fallback" style="margin-bottom:32px;"><a href="${r.tiktok}" target="_blank">Watch on TikTok</a></div>`;
+    }
+
+    let notesHTML = '';
+    if (r.notes && r.notes.length) {
+        notesHTML = `
+            <div class="section">
+                <div class="section-title">Notes</div>
+                <ul class="notes-list">
+                    ${r.notes.map(n => `<li>${n}</li>`).join('')}
+                </ul>
+            </div>
+        `;
+    }
+
+    contentAreaEl.innerHTML = `
+        <span class="recipe-meta">${r.baseType}</span>
+        <h1 class="recipe-title">${r.title}</h1>
+        <p class="recipe-desc">${r.desc}</p>
+        ${videoHTML}
+
+        <div class="section">
+            <div class="section-title">Ingredients</div>
+            <ul class="ingredient-list">
+                ${r.ingredients.map(i => `<li><input type="checkbox"><span>${i}</span></li>`).join('')}
+            </ul>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Steps</div>
+            <ol class="steps-list">
+                ${r.steps.map(s => `<li><span>${s}</span></li>`).join('')}
+            </ol>
+        </div>
+
+        ${notesHTML}
+    `;
+}
+
+function showTips() {
+    document.querySelectorAll('.recipe-item').forEach(el => el.classList.remove('active'));
+    document.querySelector('.main').scrollTop = 0;
+
+    contentAreaEl.innerHTML = `
+        <h1 class="recipe-title">Tips & Tricks</h1>
+        <p class="recipe-desc">Essential techniques for better Creami results.</p>
+        <div style="margin-top: 24px;">
+            ${tips.map(t => `<div class="tip-card"><strong>${t.title}:</strong> ${t.body}</div>`).join('')}
+        </div>
+    `;
+}
+
+renderSidebar();
+</script>
+
+</body>
+</html>
