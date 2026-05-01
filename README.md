@@ -1,6 +1,8 @@
 # Creami Recipes
 
-Extract Ninja Creami recipes from YouTube videos using `yt-dlp` and `fabric-ai`.
+Browse the recipes: **https://esteban-quijada.github.io/creami-recipes**
+
+Extract Ninja Creami recipes from YouTube and TikTok videos using `yt-dlp` and `fabric-ai`.
 
 ## Prerequisites
 
